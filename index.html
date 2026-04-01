@@ -435,21 +435,13 @@
             
             // State
             let currentState = 'combined';
+            let isFullscreen = false;
             
-            // Security
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            
-            document.addEventListener('keydown', e => {
-                if (e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                    (e.ctrlKey && e.key === 'u')) {
-                    e.preventDefault();
-                }
-            });
-            
+            // Fullscreen function
             function enterFullscreen() {
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(() => {});
+                    isFullscreen = true;
                 }
             }
             
@@ -475,6 +467,16 @@
                 setTimeout(() => errorMsg.style.display = 'none', 3500);
             }
             
+            // Open exam and close current window
+            function openExamAndClose(url) {
+                window.open(url, '_blank');
+                // Try to close current window (works in some browsers)
+                setTimeout(() => {
+                    try { window.close(); } catch(e) {}
+                    try { window.location.href = 'about:blank'; } catch(e) {}
+                }, 200);
+            }
+            
             // Password check
             function checkPassword() {
                 const pwd = passwordInput.value.trim();
@@ -489,7 +491,8 @@
                 }
                 
                 if (pwd === REGULAR_PASSWORD) {
-                    console.log('Password correct!');
+                    // Enter fullscreen when password is correct
+                    enterFullscreen();
                     switchScreen(mainInterface);
                     currentState = 'sections';
                     passwordInput.value = '';
@@ -518,13 +521,13 @@
                             return;
                         }
                         
+                        // Visual feedback
                         this.style.transform = 'scale(0.96)';
                         this.style.opacity = '0.8';
                         
+                        // Open exam and close current window
                         setTimeout(() => {
-                            window.open(url, '_blank');
-                            // Optional: close current window after opening
-                            // try { window.close(); } catch(e) {}
+                            openExamAndClose(url);
                         }, 150);
                         
                         setTimeout(() => {
@@ -535,7 +538,7 @@
                 });
             }
             
-            // ESC key to go back
+            // ESC key to go back (but not exit fullscreen)
             document.addEventListener('keydown', e => {
                 if (e.key !== 'Escape') return;
                 e.preventDefault();
@@ -551,12 +554,14 @@
             // INIT
             window.addEventListener('load', async () => {
                 initializeSectionButtons();
-                enterFullscreen();
                 focusPassword();
             });
             
+            // Click anywhere to go fullscreen on first page only
             document.addEventListener('click', () => {
-                enterFullscreen();
+                if (currentState === 'combined') {
+                    enterFullscreen();
+                }
                 if (currentState === 'combined') focusPassword();
             });
             
