@@ -90,6 +90,7 @@
             flex-shrink: 0;
             position: relative;
             overflow: hidden;
+            pointer-events: none;
         }
         
         .page-image {
@@ -109,6 +110,8 @@
             padding: 10px 20px 20px;
             flex-shrink: 0;
             position: relative;
+            z-index: 20;
+            margin-top: -20px;
         }
         
         .password-container {
@@ -210,6 +213,10 @@
             transform: translateY(-2px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
             border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .submit-btn:active {
+            transform: scale(0.97);
         }
         
         .main-interface {
@@ -465,6 +472,7 @@
             .sub-header { font-size: 0.9rem; }
             .page-header { padding: 15px 0 5px; }
             .image-container { width: 90%; height: 60vh; min-height: 200px; margin: -50px auto 10px; }
+            .password-section { margin-top: -10px; }
             .password-box { padding: 15px 20px; }
             .password-input { font-size: 15px; padding: 14px 45px 14px 18px; }
             .submit-btn { font-size: 16px; padding: 14px 20px; }
@@ -477,6 +485,7 @@
         @media (max-width: 480px) {
             .header-text { font-size: 1.5rem; }
             .image-container { width: 95%; height: 55vh; min-height: 150px; margin: -30px auto 10px; }
+            .password-section { margin-top: -5px; }
             .password-box { padding: 12px 16px; }
             .password-input { font-size: 14px; padding: 12px 40px 12px 16px; }
             .submit-btn { font-size: 15px; padding: 12px 16px; }
@@ -511,7 +520,7 @@
         
         <div class="password-section">
             <div class="password-container">
-                <div id="errorMessage" style="color:#ffaa77; font-family:sans-serif; display:none; background:rgba(0,0,0,0.5); padding:10px; border-radius:12px;"></div>
+                <div id="errorMessage" style="color:#ffaa77; font-family:sans-serif; display:none; background:rgba(0,0,0,0.5); padding:10px; border-radius:12px; text-align:center; width:100%;"></div>
                 <div class="password-box">
                     <div class="input-container">
                         <input type="password" id="passwordInput" class="password-input" placeholder="Enter access code" autocomplete="off">
@@ -600,11 +609,29 @@
             let classLocks = {};
             let isLockDataLoaded = false;
             
-            // Fullscreen function
+            // Fullscreen function - fixed for mobile
             function enterFullscreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => {});
-                    isFullscreen = true;
+                try {
+                    const elem = document.documentElement;
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen().catch(err => {
+                            console.log('Fullscreen request failed:', err);
+                        });
+                    } else if (elem.webkitRequestFullscreen) { /* Safari */
+                        elem.webkitRequestFullscreen().catch(err => {
+                            console.log('Fullscreen request failed:', err);
+                        });
+                    } else if (elem.mozRequestFullScreen) { /* Firefox */
+                        elem.mozRequestFullScreen().catch(err => {
+                            console.log('Fullscreen request failed:', err);
+                        });
+                    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                        elem.msRequestFullscreen().catch(err => {
+                            console.log('Fullscreen request failed:', err);
+                        });
+                    }
+                } catch (e) {
+                    console.log('Fullscreen not supported:', e);
                 }
             }
             
@@ -718,13 +745,9 @@
                         this.style.transform = 'scale(0.96)';
                         this.style.opacity = '0.8';
                         
-                        // Open exam and close current window
+                        // Open exam
                         setTimeout(() => {
                             window.open(url, '_blank');
-                            setTimeout(() => {
-                                try { window.close(); } catch(e) {}
-                                try { window.location.href = 'about:blank'; } catch(e) {}
-                            }, 200);
                         }, 150);
                         
                         setTimeout(() => {
@@ -753,10 +776,9 @@
                 document.getElementById('lockModal').style.display = 'none';
             };
             
-            // Password check
-            async function checkPassword() {
+            // Password check - fullscreen called synchronously
+            function checkPassword() {
                 const pwd = passwordInput.value.trim();
-                
                 errorMsg.style.display = 'none';
                 
                 if (!pwd) {
@@ -767,17 +789,18 @@
                 }
                 
                 if (pwd === REGULAR_PASSWORD) {
-                    // Load lock status before showing sections
-                    loadingOverlay.style.display = 'flex';
-                    await loadLockStatus();
-                    renderSections();
-                    loadingOverlay.style.display = 'none';
-                    
-                    // Enter fullscreen when password is correct
+                    // Enter fullscreen immediately (synchronous)
                     enterFullscreen();
-                    switchScreen(mainInterface);
-                    currentState = 'sections';
-                    passwordInput.value = '';
+                    
+                    // Then load the sections
+                    loadingOverlay.style.display = 'flex';
+                    loadLockStatus().then(() => {
+                        renderSections();
+                        loadingOverlay.style.display = 'none';
+                        switchScreen(mainInterface);
+                        currentState = 'sections';
+                        passwordInput.value = '';
+                    });
                 } else {
                     showError('Incorrect password. Try again.');
                     passwordInput.value = '';
