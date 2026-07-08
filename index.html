@@ -459,7 +459,7 @@
 
     <script>
     (function() {
-        // ========== TIME CHECK ==========
+       
         function isExamTime() {
             const now = new Date();
             const currentHour = now.getHours();
@@ -476,7 +476,7 @@
             return currentTotalMinutes >= 480 && currentTotalMinutes < 980;
         }
 
-        // ========== SECTION URLS ==========
+       
         const SECTION_URLS = {
             "1D": "https://lfjc1d.github.io/1d/",
             "1M": "https://lfjc1m.github.io/1M/",
@@ -490,10 +490,10 @@
 
         const REGULAR_PASSWORD = "lfjc2025";
         
-        // ========== TRACK USED CLASSES ==========
+       
         let usedClasses = new Set();
 
-        // ========== DOM ELEMENTS ==========
+       
         const combinedScreen = document.getElementById('combinedScreen');
         const mainInterface = document.getElementById('mainInterface');
         const passwordInput = document.getElementById('passwordInput');
@@ -504,7 +504,7 @@
 
         let currentState = 'combined';
 
-        // ========== FUNCTIONS ==========
+       
         function enterFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(() => {});
@@ -533,7 +533,7 @@
             setTimeout(() => errorMsg.style.display = 'none', 3500);
         }
 
-        // ========== RENDER SECTIONS ==========
+       
         function renderSections() {
             const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
             const column1 = sections.slice(0, 4);
@@ -570,7 +570,7 @@
 
             sectionsContainer.innerHTML = html;
 
-            // ========== CLICK HANDLER ==========
+          
             document.querySelectorAll('.section-btn:not(.used)').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const section = this.dataset.section;
@@ -581,19 +581,19 @@
                         return;
                     }
 
-                    // Mark as used - this will make it disappear
+                  
                     usedClasses.add(section);
                     
-                    // Visual feedback
+                   
                     this.style.transform = 'scale(0.96)';
                     this.style.opacity = '0.8';
 
-                    // Open the exam in new tab
+                  
                     setTimeout(() => {
                         window.open(url, '_blank');
                     }, 150);
 
-                    // Try to close the current window (like first code)
+                    
                     setTimeout(() => {
                         try { 
                             window.close(); 
@@ -603,7 +603,7 @@
                         } catch(e) {}
                     }, 200);
 
-                    // Re-render to make the button disappear
+                   
                     setTimeout(() => {
                         renderSections();
                     }, 300);
@@ -611,7 +611,7 @@
             });
         }
 
-        // ========== CHECK TIME AND RENDER ==========
+       
         function checkTimeAndRender() {
             switchScreen(mainInterface);
             currentState = 'sections';
@@ -625,7 +625,7 @@
             }
         }
 
-        // ========== PASSWORD CHECK ==========
+       
         function checkPassword() {
             const pwd = passwordInput.value.trim();
             errorMsg.style.display = 'none';
@@ -649,7 +649,7 @@
             }
         }
 
-        // ========== EVENT LISTENERS ==========
+       
         submitBtn.addEventListener('click', checkPassword);
         passwordInput.addEventListener('keypress', e => {
             if (e.key === 'Enter') checkPassword();
