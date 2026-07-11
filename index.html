@@ -534,7 +534,7 @@
         }
 
        
-       function renderSections() {
+      function renderSections() {
     const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
     const column1 = sections.slice(0, 4);
     const column2 = sections.slice(4, 8);
@@ -582,20 +582,32 @@
 
             // ✅ Mark as used
             usedClasses.add(section);
-            
-            // ✅ Visual feedback
-            this.style.transform = 'scale(0.96)';
-            this.style.opacity = '0.8';
 
-            // ✅ Open in NEW TAB (KEEP OPEN - DO NOT CLOSE)
-            setTimeout(() => {
-                window.open(url, '_blank');
-            }, 150);
+            // ✅ Open section in NEW TAB
+            window.open(url, '_blank');
 
-            // ✅ Re-render to show used status
-            setTimeout(() => {
-                renderSections();
-            }, 300);
+            // ✅ MAKE LANDING PAGE BLANK
+            document.body.innerHTML = `
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    background: #000;
+                    color: #666;
+                    font-family: Arial, sans-serif;
+                    font-size: 18px;
+                    text-align: center;
+                    padding: 20px;
+                ">
+                    <div>
+                        <div style="font-size: 48px; margin-bottom: 15px;">📚</div>
+                        <div style="font-weight: bold; color: #fff; margin-bottom: 5px;">Exam Opened</div>
+                        <div style="font-size: 14px; color: #444;">Section ${section} is now open in another tab</div>
+                        <div style="font-size: 12px; color: #555; margin-top: 10px;">You can close this tab</div>
+                    </div>
+                </div>
+            `;
         });
     });
 }
