@@ -290,10 +290,6 @@
             transform: scale(0.96);
         }
         
-        .section-btn.used {
-            display: none !important;
-        }
-        
         .lock-badge {
             position: absolute;
             top: 10px;
@@ -444,10 +440,11 @@
         </div>
         <div class="sections-overlay">
             <div id="timeStatus" class="time-status">
-                <h2>🔒 ALL EXAMS ARE LOCKED</h2>
-                <p>Exams are accessible only when unlocked</p>
+                <h2>🔒 ALL EXAMS ARE LOCKED </h2>
+                <p>Exams are accessible only in the college computer lab</p>
             </div>
             <div class="columns-container" id="sectionsContainer">
+             
                 <div class="column">
                     <div style="color: white; text-align: center; padding: 20px;">Loading...</div>
                 </div>
@@ -455,27 +452,32 @@
         </div>
     </div>
 
+  
     <div class="global-copyright">© LFJC 2026 | All Rights Reserved</div>
 
     <script>
-    (function() {
-       
-        function isExamTime() {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentTotalMinutes = currentHour * 60 + currentMinute;
-            const day = now.getDay();
-            
-            if (day === 0) return false;
-            
-            if (day === 6) {
-                return currentTotalMinutes >= 480 && currentTotalMinutes < 1200;
-            }
-            
-            return currentTotalMinutes >= 480 && currentTotalMinutes < 1200;
+  (function() {
+     
+    function isExamTime() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTotalMinutes = currentHour * 60 + currentMinute;
+        const day = now.getDay();
+        
+        
+        if (day === 0) return false;
+        
+      
+        if (day === 6) {
+            return currentTotalMinutes >= 480 && currentTotalMinutes < 810;
         }
+        
+      
+        return currentTotalMinutes >= 480 && currentTotalMinutes < 990;
+    }
 
+   
        
         const SECTION_URLS = {
             "1D": "https://lfjc1d.github.io/1d/",
@@ -489,11 +491,8 @@
         };
 
         const REGULAR_PASSWORD = "lfjc2025";
-        
-       
-        let usedClasses = new Set();
+      
 
-       
         const combinedScreen = document.getElementById('combinedScreen');
         const mainInterface = document.getElementById('mainInterface');
         const passwordInput = document.getElementById('passwordInput');
@@ -504,7 +503,6 @@
 
         let currentState = 'combined';
 
-       
         function enterFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(() => {});
@@ -533,70 +531,56 @@
             setTimeout(() => errorMsg.style.display = 'none', 3500);
         }
 
-       
-       function renderSections() {
-    const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
-    const column1 = sections.slice(0, 4);
-    const column2 = sections.slice(4, 8);
+        function renderSections() {
+            const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
+            const column1 = sections.slice(0, 4);
+            const column2 = sections.slice(4, 8);
 
-    let html = `
-        <div class="column">
-            ${column1.map(section => {
-                const isUsed = usedClasses.has(section);
-                return `
-                    <button class="section-btn ${isUsed ? 'used' : 'unlocked'}" 
-                            data-section="${section}"
-                            ${isUsed ? 'disabled' : ''}>
-                        ${section}
-                        ${!isUsed ? '<span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>' : ''}
-                    </button>
-                `;
-            }).join('')}
-        </div>
-        <div class="column">
-            ${column2.map(section => {
-                const isUsed = usedClasses.has(section);
-                return `
-                    <button class="section-btn ${isUsed ? 'used' : 'unlocked'}" 
-                            data-section="${section}"
-                            ${isUsed ? 'disabled' : ''}>
-                        ${section}
-                        ${!isUsed ? '<span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>' : ''}
-                    </button>
-                `;
-            }).join('')}
-        </div>
-    `;
+            let html = `
+                <div class="column">
+                    ${column1.map(section => `
+                        <button class="section-btn unlocked" data-section="${section}">
+                            ${section}
+                            <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="column">
+                    ${column2.map(section => `
+                        <button class="section-btn unlocked" data-section="${section}">
+                            ${section}
+                            <span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
 
-    sectionsContainer.innerHTML = html;
+            sectionsContainer.innerHTML = html;
 
-    document.querySelectorAll('.section-btn:not(.used)').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const section = this.dataset.section;
-            const url = SECTION_URLS[section];
-            
-            if (!url) {
-                alert(`URL for section ${section} not configured`);
-                return;
-            }
+            document.querySelectorAll('.section-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    const url = SECTION_URLS[section];
+                    if (!url) {
+                        alert(`URL for section ${section} not configured`);
+                        return;
+                    }
 
-            usedClasses.add(section);
-            
-            this.style.transform = 'scale(0.96)';
-            this.style.opacity = '0.8';
+                    this.style.transform = 'scale(0.96)';
+                    this.style.opacity = '0.8';
 
-            // ✅ Open in NEW TAB - KEEP OPEN
-            window.open(url, '_blank');
+                    setTimeout(() => {
+                        window.open(url, '_blank');
+                    }, 150);
 
-            // ✅ Re-render to show used status
-            setTimeout(() => {
-                renderSections();
-            }, 300);
-        });
-    });
-}
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.opacity = '';
+                    }, 300);
+                });
+            });
+        }
 
-       
         function checkTimeAndRender() {
             switchScreen(mainInterface);
             currentState = 'sections';
@@ -610,7 +594,6 @@
             }
         }
 
-       
         function checkPassword() {
             const pwd = passwordInput.value.trim();
             errorMsg.style.display = 'none';
@@ -634,7 +617,6 @@
             }
         }
 
-       
         submitBtn.addEventListener('click', checkPassword);
         passwordInput.addEventListener('keypress', e => {
             if (e.key === 'Enter') checkPassword();
@@ -668,3 +650,4 @@
     </script>
 </body>
 </html>
+
