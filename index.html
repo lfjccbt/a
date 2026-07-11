@@ -534,83 +534,71 @@
         }
 
        
-        function renderSections() {
-            const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
-            const column1 = sections.slice(0, 4);
-            const column2 = sections.slice(4, 8);
+       function renderSections() {
+    const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
+    const column1 = sections.slice(0, 4);
+    const column2 = sections.slice(4, 8);
 
-            let html = `
-                <div class="column">
-                    ${column1.map(section => {
-                        const isUsed = usedClasses.has(section);
-                        return `
-                            <button class="section-btn ${isUsed ? 'used' : 'unlocked'}" 
-                                    data-section="${section}"
-                                    ${isUsed ? 'disabled' : ''}>
-                                ${section}
-                                ${!isUsed ? '<span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>' : ''}
-                            </button>
-                        `;
-                    }).join('')}
-                </div>
-                <div class="column">
-                    ${column2.map(section => {
-                        const isUsed = usedClasses.has(section);
-                        return `
-                            <button class="section-btn ${isUsed ? 'used' : 'unlocked'}" 
-                                    data-section="${section}"
-                                    ${isUsed ? 'disabled' : ''}>
-                                ${section}
-                                ${!isUsed ? '<span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>' : ''}
-                            </button>
-                        `;
-                    }).join('')}
-                </div>
-            `;
+    let html = `
+        <div class="column">
+            ${column1.map(section => {
+                const isUsed = usedClasses.has(section);
+                return `
+                    <button class="section-btn ${isUsed ? 'used' : 'unlocked'}" 
+                            data-section="${section}"
+                            ${isUsed ? 'disabled' : ''}>
+                        ${section}
+                        ${!isUsed ? '<span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>' : ''}
+                    </button>
+                `;
+            }).join('')}
+        </div>
+        <div class="column">
+            ${column2.map(section => {
+                const isUsed = usedClasses.has(section);
+                return `
+                    <button class="section-btn ${isUsed ? 'used' : 'unlocked'}" 
+                            data-section="${section}"
+                            ${isUsed ? 'disabled' : ''}>
+                        ${section}
+                        ${!isUsed ? '<span class="lock-badge" style="background: rgba(76,175,80,0.6);">🔓 OPEN</span>' : ''}
+                    </button>
+                `;
+            }).join('')}
+        </div>
+    `;
 
-            sectionsContainer.innerHTML = html;
+    sectionsContainer.innerHTML = html;
 
-          
-            document.querySelectorAll('.section-btn:not(.used)').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const section = this.dataset.section;
-                    const url = SECTION_URLS[section];
-                    
-                    if (!url) {
-                        alert(`URL for section ${section} not configured`);
-                        return;
-                    }
+    document.querySelectorAll('.section-btn:not(.used)').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const section = this.dataset.section;
+            const url = SECTION_URLS[section];
+            
+            if (!url) {
+                alert(`URL for section ${section} not configured`);
+                return;
+            }
 
-                  
-                    usedClasses.add(section);
-                    
-                   
-                    this.style.transform = 'scale(0.96)';
-                    this.style.opacity = '0.8';
+            // ✅ Mark as used
+            usedClasses.add(section);
+            
+            // ✅ Visual feedback
+            this.style.transform = 'scale(0.96)';
+            this.style.opacity = '0.8';
 
-                  
-                    setTimeout(() => {
-                        window.open(url, '_blank');
-                    }, 150);
+            // ✅ Open in NEW TAB (KEEP OPEN - DO NOT CLOSE)
+            setTimeout(() => {
+                window.open(url, '_blank');
+            }, 150);
 
-                    
-                    setTimeout(() => {
-                        try { 
-                            window.close(); 
-                        } catch(e) {}
-                        try { 
-                            window.location.href = 'about:blank'; 
-                        } catch(e) {}
-                    }, 200);
-
-                   
-                    setTimeout(() => {
-                        renderSections();
-                    }, 300);
-                });
-            });
-        }
-
+            // ✅ Re-render to show used status
+            setTimeout(() => {
+                renderSections();
+            }, 300);
+        });
+    });
+}
        
         function checkTimeAndRender() {
             switchScreen(mainInterface);
