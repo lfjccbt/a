@@ -529,9 +529,7 @@
 
     <script>
     (function() {
-        // ============================================================
-        // GOOGLE SHEETS CONFIG - CHANGE THIS ONE LINE
-        // ============================================================
+       
        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTwl1zNNQk_IUAWraVuQKAOsDawlSBSfoWjHpDd4g1NruW3_0NYA5TNkCDLEUuk89LYW46ZlVJK7VCg/pub?output=csv';
         
         let SECTION_STATUS = {};
@@ -546,7 +544,7 @@
             "2E": "https://lfjc2e.github.io/2e/"
         };
 
-        // Fallback config if Google Sheets fails
+       
         const FALLBACK_CONFIG = {
             "1D": 1, "1M": 1, "1N": 1, "1E": 1,
             "2D": 1, "2M": 1, "2N": 1, "2E": 1
@@ -652,9 +650,7 @@
             setTimeout(() => errorMsg.style.display = 'none', 3500);
         }
 
-        // ============================================================
-        // LOAD CONFIG FROM GOOGLE SHEETS
-        // ============================================================
+      
         async function loadConfigFromSheets() {
             try {
                 const response = await fetch(SHEET_URL);
@@ -693,9 +689,7 @@
             }
         }
 
-        // ============================================================
-        // CHECK SECTION ACCESS
-        // ============================================================
+       
         function checkSectionAccess(section, url, btnElement) {
             if (isChecking) {
                 showMessage('⏳', 'PLEASE WAIT', 'A check is already in progress.', 'Please wait.', 'OK', '');
@@ -724,9 +718,7 @@
             window.open(url, '_blank');
         }
 
-        // ============================================================
-        // RENDER SECTIONS
-        // ============================================================
+      
         function renderSections() {
             hideMessage();
             
@@ -823,9 +815,7 @@
             });
         }
 
-        // ============================================================
-        // RELOAD CONFIG FROM GOOGLE SHEETS
-        // ============================================================
+       
         window.reloadConfig = async function() {
             sectionsContainer.innerHTML = `
                 <div style="color: white; text-align: center; padding: 40px; width: 100%;">
@@ -838,9 +828,7 @@
             renderSections();
         };
 
-        // ============================================================
-        // CHECK TIME AND RENDER
-        // ============================================================
+       
         async function checkTimeAndRender() {
             switchScreen(mainInterface);
             currentState = 'sections';
@@ -857,9 +845,7 @@
             }
         }
 
-        // ============================================================
-        // PASSWORD CHECK
-        // ============================================================
+      
         function checkPassword() {
             const pwd = passwordInput.value.trim();
             errorMsg.style.display = 'none';
