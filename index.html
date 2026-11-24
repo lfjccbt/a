@@ -559,9 +559,9 @@
             
             if (day === 0) return false;
             if (day === 6) {
-                return currentTotalMinutes >= 40 && currentTotalMinutes < 840;
+                return currentTotalMinutes >= 480 && currentTotalMinutes < 840;
             }
-            return currentTotalMinutes >= 40 && currentTotalMinutes < 1020;
+            return currentTotalMinutes >= 480 && currentTotalMinutes < 1020;
         }
 
         const REGULAR_PASSWORD = "lfjc2025";
@@ -675,10 +675,10 @@
                 
                 if (hasData) {
                     SECTION_STATUS = config;
-                    console.log(' Config loaded from Google Sheets:', SECTION_STATUS);
+                    console.log('✅ Config loaded from Google Sheets:', SECTION_STATUS);
                     return true;
                 } else {
-                    console.warn(' No valid data found in sheet, using fallback');
+                    console.warn('⚠️ No valid data found in sheet, using fallback');
                     SECTION_STATUS = { ...FALLBACK_CONFIG };
                     return false;
                 }
@@ -692,7 +692,7 @@
        
         function checkSectionAccess(section, url, btnElement) {
             if (isChecking) {
-                showMessage('', 'PLEASE WAIT', 'A check is already in progress.', 'Please wait.', 'OK', '');
+                showMessage('⏳', 'PLEASE WAIT', 'A check is already in progress.', 'Please wait.', 'OK', '');
                 return;
             }
 
@@ -702,7 +702,7 @@
             }
 
             if (!navigator.onLine) {
-                showMessage('', 'NETWORK LOSS', 'Your internet connection is lost.', 'Please check your network and try again.', 'Try Again', 'orange');
+                showMessage('📡', 'NETWORK LOSS', 'Your internet connection is lost.', 'Please check your network and try again.', 'Try Again', 'orange');
                 return;
             }
 
@@ -806,7 +806,7 @@
                     const url = SECTION_URLS[section];
                     
                     if (!url) {
-                        showMessage('', 'CONFIGURATION ERROR', `Section ${section} is not configured.`, 'Contact admin.', 'OK', '');
+                        showMessage('⚠️', 'CONFIGURATION ERROR', `Section ${section} is not configured.`, 'Contact admin.', 'OK', '');
                         return;
                     }
 
@@ -913,7 +913,7 @@
 
         window.addEventListener('offline', () => {
             if (currentState === 'sections') {
-                showMessage('', 'CONNECTION LOST', 'Your internet connection has been lost.', 'Please reconnect.', 'OK', 'orange');
+                showMessage('📡', 'CONNECTION LOST', 'Your internet connection has been lost.', 'Please reconnect.', 'OK', 'orange');
             }
         });
 
