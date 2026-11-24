@@ -557,8 +557,8 @@
         const total = now.getHours() * 60 + now.getMinutes();
         const day = now.getDay(); // 0 Sun … 6 Sat
         if (day === 0) return false;
-        if (day === 6) return total >= 480 && total < 840;   // 08:00–14:00
-        return total >= 480 && total < 1020;                  // 08:00–17:00
+        if (day === 6) return total >= 40 && total < 840;   // 08:00–14:00
+        return total >= 40 && total < 1020;                  // 08:00–17:00
     }
 
     let SECTION_STATUS = {};
