@@ -482,6 +482,27 @@
                 padding-bottom: 40px;
                 min-height: auto;
             }
+
+            /* ---- FIX: keep main-interface header at the TOP on mobile ---- */
+            #mainInterface .page-header {
+                padding: 20px 0 10px;
+                margin-bottom: 0;
+            }
+            #mainInterface .header-text {
+                font-size: 1.6rem;
+                letter-spacing: 0.5px;
+            }
+            #mainInterface .sections-overlay {
+                margin-top: 0;
+                padding-top: 10px;
+                align-items: flex-start;
+            }
+
+            /* Keep the "ALL EXAMS ARE LOCKED" banner below the header */
+            #timeStatus.time-status {
+                top: 90px;
+                transform: translateX(-50%);
+            }
         }
 
         @media (max-width: 480px) {
@@ -859,7 +880,6 @@
             }
         }
 
-        // ---- Mobile-safe submit: pointerup + click, debounced ----
         let lastSubmit = 0;
         function handleSubmit(e) {
             if (e) e.preventDefault();
@@ -901,7 +921,6 @@
             sessionStorage.removeItem(STORAGE_KEY);
         });
 
-        // ---- Global tap handler: ignores password box AND submit button ----
         document.addEventListener('click', (e) => {
             if (currentState !== 'combined') return;
             if (e.target.closest('.password-box')) return;
