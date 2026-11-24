@@ -460,8 +460,6 @@
             .header-text { font-size: 2rem; }
             .sub-header { font-size: 1rem; }
             .image-container { height: 60vh; }
-            .columns-container { flex-direction: column; }
-            .column { max-width: 350px; min-height: auto; }
             .section-btn { font-size: 18px; padding: 18px 10px; }
             .interface-message { padding: 30px 20px; }
             .interface-message h2 { font-size: 22px; }
@@ -483,7 +481,7 @@
                 min-height: auto;
             }
 
-            /* ---- FIX: keep main-interface header at the TOP on mobile ---- */
+            /* ---- Keep main header at the TOP on mobile ---- */
             #mainInterface .page-header {
                 padding: 20px 0 10px;
                 margin-bottom: 0;
@@ -498,11 +496,38 @@
                 align-items: flex-start;
             }
 
-            /* Keep the "ALL EXAMS ARE LOCKED" banner below the header */
             #timeStatus.time-status {
                 top: 90px;
                 transform: translateX(-50%);
             }
+
+            /* ---- Sections side by side on mobile (no overlap) ---- */
+            .columns-container {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 12px;
+                padding: 10px;
+                align-items: stretch;
+            }
+            .column {
+                flex: 1 1 0;
+                min-width: 0;
+                max-width: none;
+                min-height: auto;
+                gap: 10px;
+            }
+            .section-btn {
+                font-size: 15px;
+                padding: 14px 6px;
+                border-radius: 14px;
+                white-space: normal;
+                word-break: break-word;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .section-btn { font-size: 13px; padding: 12px 4px; }
+            .columns-container { gap: 8px; }
         }
 
         @media (max-width: 480px) {
