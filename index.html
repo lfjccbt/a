@@ -204,6 +204,7 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .submit-btn:hover {
@@ -280,6 +281,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
             position: relative;
+            touch-action: manipulation;
         }
 
         .section-btn.unlocked {
@@ -465,7 +467,6 @@
             .interface-message h2 { font-size: 22px; }
             .interface-message .icon { font-size: 50px; }
 
-            /* ---- FIX 3: mobile layout no longer clips ---- */
             .combined-screen.screen-bg {
                 overflow-y: auto;
                 justify-content: flex-start;
@@ -507,7 +508,7 @@
                 <div id="errorMessage" style="color:#ffaa77; font-family:sans-serif; display:none; background:rgba(0,0,0,0.5); padding:10px; border-radius:12px;"></div>
                 <div class="password-box">
                     <div class="input-container">
-                        <input type="password" id="passwordInput" class="password-input" placeholder="Enter access code" autocomplete="off">
+                        <input type="password" id="passwordInput" class="password-input" placeholder="Enter access code" autocomplete="off" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
                         <span class="input-icon">🔒</span>
                     </div>
                     <button id="submitBtn" class="submit-btn">SUBMIT</button>
@@ -570,13 +571,12 @@
             "2D": 1, "2M": 1, "2N": 1, "2E": 1
         };
 
-        // ---- FIX 1: correct schedule — Mon–Fri 08:00–17:00, Sat 08:00–14:00, Sun closed ----
         function isExamTime() {
             const now = new Date();
             const total = now.getHours() * 60 + now.getMinutes();
             const day = now.getDay(); // 0 Sun … 6 Sat
             if (day === 0) return false;
-            if (day === 6) return total >= 40 && total < 840;   // Saturday 08:00–14:00
+            if (day === 6) return total >= 40 && total < 840;   // Sat 08:00–14:00
             return total >= 40 && total < 1020;                  // Mon–Fri 08:00–17:00
         }
 
@@ -646,7 +646,7 @@
         }
 
         function focusPassword() {
-            setTimeout(() => passwordInput?.focus(), 100);
+            setTimeout(() => passwordInput && passwordInput.focus(), 100);
         }
 
         function switchScreen(toScreen) {
@@ -657,8 +657,9 @@
 
         function shakeBox() {
             const box = document.querySelector('.password-box');
-            box?.style.setProperty('animation', 'shake 0.5s');
-            setTimeout(() => box?.style.removeProperty('animation'), 500);
+            if (!box) return;
+            box.style.setProperty('animation', 'shake 0.5s');
+            setTimeout(() => box.style.removeProperty('animation'), 500);
         }
 
         function showError(msg) {
@@ -738,8 +739,6 @@
             window.open(url, '_blank');
         }
 
-        // ---- FIX 4: always render all 8 classes. When the window is closed,
-        //             every class shows as locked (your original red locked style).
         function renderSections() {
             hideMessage();
 
@@ -833,7 +832,6 @@
                 timeStatus.style.display = 'none';
             }
 
-            // Always render all classes — locked ones show your red locked style.
             renderSections();
         }
 
@@ -849,9 +847,10 @@
             }
 
             if (pwd === REGULAR_PASSWORD) {
-                enterFullscreen();
-                checkTimeAndRender();
-                passwordInput.value = '';
+                checkTimeAndRender().finally(() => {
+                    enterFullscreen();
+                    passwordInput.value = '';
+                });
             } else {
                 showError('Incorrect password. Try again.');
                 passwordInput.value = '';
@@ -860,9 +859,24 @@
             }
         }
 
-        submitBtn.addEventListener('click', checkPassword);
-        passwordInput.addEventListener('keypress', e => {
-            if (e.key === 'Enter') checkPassword();
+        // ---- Mobile-safe submit: pointerup + click, debounced ----
+        let lastSubmit = 0;
+        function handleSubmit(e) {
+            if (e) e.preventDefault();
+            const now = Date.now();
+            if (now - lastSubmit < 400) return;
+            lastSubmit = now;
+            checkPassword();
+        }
+
+        submitBtn.addEventListener('click', handleSubmit);
+        submitBtn.addEventListener('pointerup', handleSubmit);
+
+        passwordInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                handleSubmit(e);
+            }
         });
 
         document.addEventListener('keydown', e => {
@@ -887,10 +901,11 @@
             sessionStorage.removeItem(STORAGE_KEY);
         });
 
-        // ---- FIX 2: no enterFullscreen() on tap — fixes mobile password click ----
+        // ---- Global tap handler: ignores password box AND submit button ----
         document.addEventListener('click', (e) => {
             if (currentState !== 'combined') return;
-            if (e.target.closest('.password-box')) return; // let the input handle its own focus
+            if (e.target.closest('.password-box')) return;
+            if (e.target.closest('#submitBtn')) return;
             focusPassword();
         });
 
