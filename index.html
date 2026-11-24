@@ -1,890 +1,917 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>LFJC Online Examination</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --bg: #0F172A;
-        --surface: #1E293B;
-        --surface-2: #172033;
-        --border: #334155;
-        --text: #E2E8F0;
-        --text-muted: #94A3B8;
-        --accent: #2563EB;
-        --accent-hover: #1D4ED8;
-        --green: #16A34A;
-        --red: #DC2626;
-        --amber: #D97706;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>LFJC Online Examination</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: #000;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    html, body {
-        height: 100%;
-        background: var(--bg);
-        color: var(--text);
-        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        -webkit-tap-highlight-color: transparent;
-        -webkit-font-smoothing: antialiased;
-    }
+        .screen {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
 
-    body {
-        overflow: hidden;
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-    }
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
 
-    .screen {
-        position: fixed;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.2s ease, visibility 0.2s ease;
-        display: flex;
-        flex-direction: column;
-    }
+        .screen-bg {
+            background: linear-gradient(135deg, #141E30 0%, #243B55 50%, #0F2027 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0 20px;
+            height: 100vh;
+            height: 100dvh;
+        }
 
-    .screen.active { opacity: 1; visibility: visible; }
+        .page-header {
+            width: 100%;
+            text-align: center;
+            padding: 55px 0;
+            z-index: 10;
+            flex-shrink: 0;
+        }
 
-    /* ---------- Top bar ---------- */
-    .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 20px;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        flex-shrink: 0;
-    }
+        .header-text {
+            font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #5D4037;
+            text-shadow:
+                2px 2px 0 rgba(255, 255, 255, 0.7),
+                4px 4px 0 rgba(0, 0, 0, 0.2);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
 
-    .brand {
-        font-weight: 700;
-        font-size: 15px;
-        letter-spacing: 0.2px;
-        color: var(--text);
-    }
+        .sub-header {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #8B4513;
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+        }
 
-    .brand small {
-        display: block;
-        font-weight: 500;
-        font-size: 11px;
-        color: var(--text-muted);
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        margin-top: 2px;
-    }
+        .image-container {
+            width: 85%;
+            max-width: 1000px;
+            height: 75vh;
+            min-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: -100px auto 10px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* ---------- Login screen ---------- */
-    .login-wrap {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        gap: 28px;
-        overflow-y: auto;
-    }
+        .page-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            display: block;
+        }
 
-    .login-logo {
-        width: 100%;
-        max-width: 560px;
-        max-height: 340px;
-        object-fit: contain;
-        border-radius: 12px;
-    }
+        .password-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px 0;
+            flex-shrink: 0;
+            min-height: 120px;
+            margin-top: -110px;
+            position: relative;
+        }
 
-    .login-card {
-        width: 100%;
-        max-width: 380px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 28px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
+        .password-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 20px;
+        }
 
-    .login-card h1 {
-        font-size: 18px;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-    }
+        .password-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 20px rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
 
-    .login-card p.muted {
-        font-size: 13px;
-        color: var(--text-muted);
-        line-height: 1.5;
-        margin-top: -6px;
-    }
+        .input-container {
+            position: relative;
+            width: 100%;
+        }
 
-    .input-container { position: relative; width: 100%; }
+        .password-input {
+            width: 100%;
+            padding: 18px 50px 18px 25px;
+            font-size: 17px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transition: all 0.2s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
 
-    .password-input {
-        width: 100%;
-        padding: 14px 44px 14px 16px;
-        font-size: 15px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        outline: none;
-        background: var(--surface-2);
-        color: var(--text);
-        font-family: inherit;
-        transition: border-color 0.15s, box-shadow 0.15s;
-        -webkit-appearance: none;
-        appearance: none;
-    }
+        .password-input:focus {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+        }
 
-    .password-input:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
-    }
+        .password-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
 
-    .password-input::placeholder { color: #64748B; }
+        .input-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            pointer-events: none;
+        }
 
-    .input-icon {
-        position: absolute;
-        right: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-size: 16px;
-        pointer-events: none;
-    }
+        .submit-btn {
+            background: linear-gradient(135deg,
+                rgba(33, 150, 243, 0.8) 0%,
+                rgba(21, 101, 192, 0.8) 100%);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            padding: 18px 30px;
+            font-size: 17px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    .submit-btn {
-        background: var(--accent);
-        color: white;
-        border: none;
-        padding: 14px 20px;
-        font-size: 15px;
-        font-weight: 600;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background 0.15s, transform 0.1s;
-        font-family: inherit;
-        width: 100%;
-        touch-action: manipulation;
-    }
+        .submit-btn:hover {
+            background: linear-gradient(135deg,
+                rgba(33, 150, 243, 0.9) 0%,
+                rgba(21, 101, 192, 0.9) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
 
-    .submit-btn:hover { background: var(--accent-hover); }
-    .submit-btn:active { transform: scale(0.985); }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .main-interface {
+            z-index: 800;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+        }
 
-    .error-msg {
-        color: #FCA5A5;
-        font-size: 13px;
-        background: #2A0A0A;
-        border: 1px solid #7F1D1D;
-        padding: 10px 12px;
-        border-radius: 8px;
-        display: none;
-    }
+        .sections-overlay {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            padding: 10px;
+            overflow-y: auto;
+            position: relative;
+        }
 
-    /* ---------- Main interface ---------- */
-    .main-interface {
-        background: var(--bg);
-        overflow: hidden;
-    }
+        .columns-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1400px;
+            padding: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-    .content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 24px 20px 40px;
-        overflow-y: auto;
-        gap: 16px;
-    }
+        .column {
+            flex: 0 1 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: space-evenly;
+            min-height: 500px;
+        }
 
-    .content-header {
-        width: 100%;
-        max-width: 960px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        margin-bottom: 4px;
-    }
+        .section-btn {
+            background: rgba(255, 253, 245, 0.85);
+            border: none;
+            border-radius: 18px;
+            padding: 25px 10px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #5D4037;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 253, 245, 0.3);
+            width: 100%;
+            text-align: center;
+            display: block;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
 
-    .content-header h2 {
-        font-size: 22px;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-    }
+        .section-btn.unlocked {
+            background: rgba(76, 175, 80, 0.85);
+            color: white;
+            text-shadow: none;
+        }
 
-    .content-header p {
-        font-size: 13px;
-        color: var(--text-muted);
-    }
+        .section-btn.unlocked:hover {
+            background: rgba(76, 175, 80, 0.95);
+        }
 
-    .status-strip {
-        width: 100%;
-        max-width: 960px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 16px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        font-size: 12.5px;
-        color: var(--text-muted);
-        flex-wrap: wrap;
-    }
+        .section-btn:active {
+            transform: scale(0.96);
+        }
 
-    .status-strip strong { color: var(--text); font-weight: 600; }
+        .section-btn.used {
+            background: rgba(100, 100, 100, 0.5);
+            color: #888;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-shadow: none;
+        }
+        .section-btn.used .lock-badge { display: none; }
 
-    .columns-container {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-        width: 100%;
-        max-width: 960px;
-    }
+        .section-btn.locked {
+            background: rgba(239, 83, 80, 0.15);
+            color: #EF9A9A;
+            cursor: not-allowed;
+            opacity: 0.75;
+            text-shadow: none;
+            border-color: #EF5350;
+        }
+        .section-btn.locked .lock-badge { display: none; }
 
-    .column {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
+        .lock-badge {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 14px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: white;
+        }
 
-    .column-label {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: var(--text-muted);
-        padding: 0 4px;
-    }
+        .column:nth-child(1) .section-btn {
+            border-right: 4px solid rgba(76, 175, 80, 0.4);
+        }
 
-    .section-btn {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 16px 18px;
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text);
-        cursor: pointer;
-        transition: background 0.15s, border-color 0.15s, transform 0.1s;
-        width: 100%;
-        text-align: left;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: inherit;
-        touch-action: manipulation;
-    }
+        .column:nth-child(2) .section-btn {
+            border-right: 4px solid rgba(33, 150, 243, 0.4);
+        }
 
-    .section-btn:hover:not(:disabled) { background: var(--surface-2); }
-    .section-btn:active:not(:disabled) { transform: scale(0.99); }
+        .global-copyright {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 9999;
+            pointer-events: none;
+        }
 
-    .section-btn.unlocked { border-color: var(--green); }
-    .section-btn.unlocked:hover { background: #052E16; }
+        .time-status {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
 
-    .section-btn.locked {
-        border-color: var(--red);
-        color: var(--text-muted);
-        cursor: not-allowed;
-    }
+        .time-status h2 {
+            color: #ff6b6b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
 
-    .section-btn.used {
-        background: #0B1220;
-        color: #475569;
-        cursor: not-allowed;
-        border-color: #1E293B;
-    }
+        .time-status p {
+            font-size: 18px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
 
-    .section-btn .badge {
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.4px;
-        padding: 3px 8px;
-        border-radius: 999px;
-        text-transform: uppercase;
-    }
+        .interface-message {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: rgba(20, 20, 40, 0.95);
+            border-radius: 24px;
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            animation: fadeInMsg 0.4s ease;
+        }
+        .interface-message .icon { font-size: 60px; margin-bottom: 15px; }
+        .interface-message h2 { color: #ff6b6b; font-size: 26px; margin-bottom: 10px; font-weight: 700; }
+        .interface-message p { color: #ccc; font-size: 16px; line-height: 1.7; margin-bottom: 5px; }
+        .interface-message .sub-text { color: #888; font-size: 14px; margin-top: 10px; }
+        .interface-message .close-btn {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .interface-message .close-btn:hover { transform: scale(1.05); }
+        .interface-message .close-btn.orange { background: linear-gradient(135deg, #FF9800, #E65100); }
 
-    .section-btn.unlocked .badge { background: #052E16; color: #86EFAC; }
-    .section-btn.locked .badge { background: #2A0A0A; color: #FCA5A5; }
-    .section-btn.used .badge { display: none; }
+        @keyframes fadeInMsg {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
-    /* ---------- Locked overlay ---------- */
-    .time-status {
-        display: none;
-        width: 100%;
-        max-width: 480px;
-        margin: 40px auto;
-        background: var(--surface);
-        border: 1px solid var(--red);
-        border-radius: 12px;
-        padding: 32px 24px;
-        text-align: center;
-    }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+            20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
 
-    .time-status h2 {
-        color: #FCA5A5;
-        font-size: 18px;
-        margin-bottom: 12px;
-        font-weight: 700;
-    }
+        #mainInterface .header-text {
+            color: #FF9800;
+            text-shadow: none;
+        }
 
-    .time-status p {
-        font-size: 14px;
-        color: var(--text-muted);
-        line-height: 1.7;
-    }
+        #mainInterface .sub-header {
+            color: #F57C00;
+            text-shadow: none;
+        }
 
-    /* ---------- Message box ---------- */
-    .interface-message {
-        display: none;
-        width: 100%;
-        max-width: 420px;
-        margin: 40px auto;
-        padding: 28px 24px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        text-align: center;
-    }
+        #mainInterface .page-header {
+            padding-bottom: 0px;
+            margin-bottom: -70px;
+        }
 
-    .interface-message .icon { font-size: 40px; margin-bottom: 10px; }
-    .interface-message h2 { font-size: 17px; margin-bottom: 8px; font-weight: 700; }
-    .interface-message p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
-    .interface-message .sub-text { color: #64748B; font-size: 12.5px; margin-top: 8px; }
+        #mainInterface .sections-overlay {
+            margin-top: -60px;
+            padding-top: 0;
+        }
 
-    .interface-message .close-btn {
-        margin-top: 18px;
-        background: var(--accent);
-        color: white;
-        border: none;
-        padding: 10px 28px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: inherit;
-        transition: background 0.15s;
-    }
-    .interface-message .close-btn:hover { background: var(--accent-hover); }
-    .interface-message .close-btn.orange { background: var(--amber); }
-    .interface-message .close-btn.orange:hover { background: #B45309; }
-    .interface-message .close-btn.green { background: var(--green); }
-    .interface-message .close-btn.green:hover { background: #15803D; }
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #FF9800;
+            animation: spin 0.8s ease infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ---------- Loading / empty states ---------- */
-    .state-box {
-        width: 100%;
-        max-width: 960px;
-        text-align: center;
-        padding: 48px 24px;
-        color: var(--text-muted);
-    }
+        @media (max-width: 768px) {
+            .header-text { font-size: 2rem; }
+            .sub-header { font-size: 1rem; }
+            .image-container { height: 60vh; }
+            .columns-container { flex-direction: column; }
+            .column { max-width: 350px; min-height: auto; }
+            .section-btn { font-size: 18px; padding: 18px 10px; }
+            .interface-message { padding: 30px 20px; }
+            .interface-message h2 { font-size: 22px; }
+            .interface-message .icon { font-size: 50px; }
 
-    .state-box .emoji { font-size: 36px; margin-bottom: 12px; }
-    .state-box h3 { color: var(--text); font-size: 16px; margin-bottom: 6px; font-weight: 600; }
-    .state-box p { font-size: 13px; }
+            /* ---- FIX 3: mobile layout no longer clips ---- */
+            .combined-screen.screen-bg {
+                overflow-y: auto;
+                justify-content: flex-start;
+                gap: 10px;
+            }
+            .image-container {
+                margin: 0 auto 10px;
+                height: 45vh;
+                min-height: 180px;
+            }
+            .password-section {
+                margin-top: 0;
+                padding-bottom: 40px;
+                min-height: auto;
+            }
+        }
 
-    .loading-spinner {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        border: 3px solid var(--border);
-        border-radius: 50%;
-        border-top-color: var(--accent);
-        animation: spin 0.8s linear infinite;
-        margin-bottom: 12px;
-    }
+        @media (max-width: 480px) {
+            .header-text { font-size: 1.6rem; }
+            .image-container { height: 55vh; }
+        }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .retry-btn {
-        margin-top: 16px;
-        background: var(--accent);
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: inherit;
-    }
-
-    /* ---------- Footer ---------- */
-    .global-copyright {
-        padding: 12px;
-        text-align: center;
-        color: #475569;
-        font-size: 11px;
-        flex-shrink: 0;
-        border-top: 1px solid #1E293B;
-        background: var(--bg);
-    }
-
-    /* ---------- Shake ---------- */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-5px); }
-        40%, 80% { transform: translateX(5px); }
-    }
-
-    /* ---------- Responsive ---------- */
-    @media (max-width: 640px) {
-        .topbar { padding: 12px 16px; }
-        .brand { font-size: 14px; }
-        .login-wrap { padding: 20px 16px; gap: 20px; }
-        .login-logo { max-width: 100%; max-height: 220px; }
-        .login-card { padding: 22px; }
-        .content { padding: 20px 16px 32px; }
-        .content-header h2 { font-size: 19px; }
-        .columns-container { grid-template-columns: 1fr; }
-        .section-btn { padding: 15px 16px; font-size: 14.5px; }
-    }
-
-    ::-webkit-scrollbar { display: none; }
-    body { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
+        ::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN ============ -->
-<div id="combinedScreen" class="screen active">
-    <header class="topbar">
-        <div class="brand">LFJC Online Examination<small>Student Portal</small></div>
-    </header>
-    <main class="login-wrap">
-        <img src="https://i.ibb.co/MDKxfWzQ/1234.png"
-             alt="LFJC"
-             class="login-logo"
-             onerror="this.style.display='none'">
-        <div class="login-card">
-            <h1>Access Code</h1>
-            <p class="muted">Enter the code provided by your administrator to continue.</p>
-            <div class="error-msg" id="errorMessage"></div>
-            <div class="input-container">
-                <input type="password" id="passwordInput" class="password-input"
-                       placeholder="Enter access code" autocomplete="off"
-                       inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
-                <span class="input-icon">🔒</span>
-            </div>
-            <button id="submitBtn" class="submit-btn">Continue</button>
+    <div id="combinedScreen" class="combined-screen screen-bg screen active">
+        <div class="page-header"></div>
+        <div class="image-container">
+            <img src="https://i.ibb.co/MDKxfWzQ/1234.png"
+                 alt="LFJC Image"
+                 class="page-image"
+                 onerror="this.style.display='none'">
         </div>
-    </main>
-    <footer class="global-copyright">© LFJC 2026 · All Rights Reserved</footer>
-</div>
-
-<!-- ============ MAIN INTERFACE ============ -->
-<div id="mainInterface" class="screen main-interface">
-    <header class="topbar">
-        <div class="brand">LFJC Online Examination<small>Exam Sections</small></div>
-    </header>
-    <main class="content" id="mainContent">
-        <div class="content-header">
-            <h2>Select your section</h2>
-            <p>Sections open in a new tab. Each section can be opened once.</p>
-        </div>
-
-        <div class="status-strip" id="statusStrip">
-            <span>Opened: <strong id="openedCount">0</strong> / 8</span>
-        </div>
-
-        <div id="timeStatus" class="time-status">
-            <h2>🔒 Exam Unavailable</h2>
-            <p>Exams are not available right now. Please contact your administrator.</p>
-        </div>
-
-        <div id="interfaceMessage" class="interface-message">
-            <div class="icon" id="msgIcon">🔒</div>
-            <h2 id="msgTitle">Exam Locked</h2>
-            <p id="msgMessage"></p>
-            <div class="sub-text" id="msgSubText"></div>
-            <button class="close-btn" id="msgCloseBtn">OK</button>
-        </div>
-
-        <div class="columns-container" id="sectionsContainer">
-            <div class="state-box">
-                <div class="loading-spinner"></div>
-                <p>Loading configuration…</p>
+        <div class="password-section">
+            <div class="password-container">
+                <div id="errorMessage" style="color:#ffaa77; font-family:sans-serif; display:none; background:rgba(0,0,0,0.5); padding:10px; border-radius:12px;"></div>
+                <div class="password-box">
+                    <div class="input-container">
+                        <input type="password" id="passwordInput" class="password-input" placeholder="Enter access code" autocomplete="off">
+                        <span class="input-icon">🔒</span>
+                    </div>
+                    <button id="submitBtn" class="submit-btn">SUBMIT</button>
+                </div>
             </div>
         </div>
-    </main>
-    <footer class="global-copyright">© LFJC 2026 · All Rights Reserved</footer>
-</div>
+    </div>
 
-<script>
-(function() {
-    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTwl1zNNQk_IUAWraVuQKAOsDawlSBSfoWjHpDd4g1NruW3_0NYA5TNkCDLEUuk89LYW46ZlVJK7VCg/pub?output=csv';
+    <div id="mainInterface" class="main-interface screen">
+        <div class="page-header">
+            <div class="header-text">LFJC ONLINE EXAMINATION</div>
+            <div class="sub-header"></div>
+        </div>
+        <div class="sections-overlay">
+            <div id="timeStatus" class="time-status">
+                <h2>🔒 ALL EXAMS ARE LOCKED</h2>
+                <p>Contact your Administrator</p>
+            </div>
 
-    const SECTION_URLS = {
-        "1D": "https://lfjc1d.github.io/1d/",
-        "1M": "https://lfjc1m.github.io/1M/",
-        "1N": "https://lfjc1n.github.io/1n/",
-        "1E": "https://lfjc1e.github.io/1e/",
-        "2D": "https://lfjc2d.github.io/2d/",
-        "2M": "https://lfjc2m.github.io/2m/",
-        "2N": "https://lfjc2n.github.io/2n/",
-        "2E": "https://lfjc2e.github.io/2e/"
-    };
+            <div id="interfaceMessage" class="interface-message">
+                <div class="icon" id="msgIcon">🔒</div>
+                <h2 id="msgTitle">EXAM LOCKED</h2>
+                <p id="msgMessage">Section <strong style="color:#ff6b6b;">1D</strong> is currently locked.</p>
+                <div class="sub-text" id="msgSubText">This exam is restricted to authorized students only.</div>
+                <button class="close-btn" id="msgCloseBtn">OK</button>
+            </div>
 
-    const FALLBACK_CONFIG = {
-        "1D": 1, "1M": 1, "1N": 1, "1E": 1,
-        "2D": 1, "2M": 1, "2N": 1, "2E": 1
-    };
+            <div class="columns-container" id="sectionsContainer">
+                <div class="column">
+                    <div style="color: white; text-align: center; padding: 40px;">
+                        <div class="loading-spinner"></div>
+                        <p style="color: #aaa;">Loading configuration...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    const ALL_SECTIONS = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
-    const COLUMN_1 = ALL_SECTIONS.slice(0, 4);
-    const COLUMN_2 = ALL_SECTIONS.slice(4, 8);
+    <div class="global-copyright">© LFJC 2026 | All Rights Reserved</div>
 
-    // ----- Silent time gate: Mon–Fri 08:00–17:00, Sat 08:00–14:00, Sun closed -----
-    function isExamTime() {
-        const now = new Date();
-        const total = now.getHours() * 60 + now.getMinutes();
-        const day = now.getDay(); // 0 Sun … 6 Sat
-        if (day === 0) return false;
-        if (day === 6) return total >= 40 && total < 840;   // 08:00–14:00
-        return total >= 40 && total < 1020;                  // 08:00–17:00
-    }
+    <script>
+    (function() {
 
-    let SECTION_STATUS = {};
-    let usedClasses = new Set();
-    let isChecking = false;
-    let currentState = 'combined';
-    const STORAGE_KEY = 'lfjc_used_sections';
-    const REGULAR_PASSWORD = 'lfjc2025';
+       const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTwl1zNNQk_IUAWraVuQKAOsDawlSBSfoWjHpDd4g1NruW3_0NYA5TNkCDLEUuk89LYW46ZlVJK7VCg/pub?output=csv';
 
-    const combinedScreen = document.getElementById('combinedScreen');
-    const mainInterface = document.getElementById('mainInterface');
-    const passwordInput = document.getElementById('passwordInput');
-    const submitBtn = document.getElementById('submitBtn');
-    const errorMsg = document.getElementById('errorMessage');
-    const sectionsContainer = document.getElementById('sectionsContainer');
-    const timeStatus = document.getElementById('timeStatus');
-    const openedCount = document.getElementById('openedCount');
-
-    const msgBox = document.getElementById('interfaceMessage');
-    const msgIcon = document.getElementById('msgIcon');
-    const msgTitle = document.getElementById('msgTitle');
-    const msgMessage = document.getElementById('msgMessage');
-    const msgSubText = document.getElementById('msgSubText');
-    const msgCloseBtn = document.getElementById('msgCloseBtn');
-
-    // ----- Used sections persistence -----
-    function loadUsedSections() {
-        try {
-            const saved = sessionStorage.getItem(STORAGE_KEY);
-            if (saved) usedClasses = new Set(JSON.parse(saved));
-        } catch (e) {}
-    }
-    function saveUsedSections() {
-        try {
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...usedClasses]));
-        } catch (e) {}
-    }
-    loadUsedSections();
-
-    // ----- Message helpers -----
-    function showMessage(icon, title, message, subText, btnText, btnClass) {
-        msgIcon.textContent = icon;
-        msgTitle.textContent = title;
-        msgMessage.innerHTML = message;
-        msgSubText.textContent = subText || '';
-        msgCloseBtn.textContent = btnText || 'OK';
-        msgCloseBtn.className = 'close-btn ' + (btnClass || '');
-        sectionsContainer.style.display = 'none';
-        timeStatus.style.display = 'none';
-        msgBox.style.display = 'block';
-    }
-    function hideMessage() {
-        msgBox.style.display = 'none';
-        sectionsContainer.style.display = 'grid';
-    }
-    msgCloseBtn.addEventListener('click', hideMessage);
-
-    // ----- Screen switching -----
-    function switchScreen(to) {
-        combinedScreen.classList.remove('active');
-        mainInterface.classList.remove('active');
-        to.classList.add('active');
-    }
-
-    function focusPassword() {
-        setTimeout(() => passwordInput && passwordInput.focus(), 120);
-    }
-
-    function shakeBox() {
-        const box = document.querySelector('.login-card');
-        if (!box) return;
-        box.style.animation = 'shake 0.45s';
-        setTimeout(() => { box.style.animation = ''; }, 500);
-    }
-
-    function showError(msg) {
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = msg;
-        setTimeout(() => { errorMsg.style.display = 'none'; }, 3500);
-    }
-
-    function enterFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(() => {});
-        }
-    }
-
-    // ----- Config loading -----
-    async function loadConfigFromSheets() {
-        try {
-            const response = await fetch(SHEET_URL);
-            if (!response.ok) throw new Error('Network error');
-            const csv = await response.text();
-            const rows = csv.split('\n');
-            const config = {};
-            let hasData = false;
-            rows.forEach(row => {
-                const parts = row.split(',');
-                if (parts.length >= 2) {
-                    const section = parts[0].trim().toUpperCase();
-                    const status = parseInt(parts[1].trim(), 10);
-                    if (section && !isNaN(status) && SECTION_URLS[section]) {
-                        config[section] = status;
-                        hasData = true;
-                    }
-                }
-            });
-            if (hasData) {
-                SECTION_STATUS = config;
-                return true;
-            }
-            SECTION_STATUS = { ...FALLBACK_CONFIG };
-            return false;
-        } catch (e) {
-            SECTION_STATUS = { ...FALLBACK_CONFIG };
-            return false;
-        }
-    }
-
-    // ----- Section access -----
-    function checkSectionAccess(section, url) {
-        if (isChecking) {
-            showMessage('⏳', 'Please wait', 'A check is already in progress.', '', 'OK', '');
-            return;
-        }
-        if (usedClasses.has(section)) {
-            showMessage('✅', 'Already opened', `Section ${section} has already been opened.`, '', 'OK', 'green');
-            return;
-        }
-        if (!navigator.onLine) {
-            showMessage('📡', 'Network lost', 'Your internet connection is lost.', 'Please check your network and try again.', 'OK', 'orange');
-            return;
-        }
-        if (SECTION_STATUS[section] === 0) {
-            showMessage('🔒', 'Exam locked', `Section ${section} is currently locked.`,
-                        'This exam is restricted to authorized students.', 'OK', '');
-            return;
-        }
-        usedClasses.add(section);
-        saveUsedSections();
-        renderSections();
-        window.open(url, '_blank');
-    }
-
-    // ----- Render sections -----
-    function renderSections() {
-        hideMessage();
-
-        if (!ALL_SECTIONS.some(s => SECTION_STATUS[s] !== undefined)) {
-            sectionsContainer.innerHTML = `
-                <div class="state-box" style="grid-column:1/-1;">
-                    <div class="emoji">⏳</div>
-                    <h3>Loading configuration…</h3>
-                    <p>Please wait while we fetch the latest settings.</p>
-                    <button class="retry-btn" onclick="reloadConfig()">Retry</button>
-                </div>`;
-            return;
-        }
-
-        if (ALL_SECTIONS.every(s => usedClasses.has(s))) {
-            sectionsContainer.innerHTML = `
-                <div class="state-box" style="grid-column:1/-1;">
-                    <div class="emoji">🎉</div>
-                    <h3>All exams completed</h3>
-                    <p>You have opened all available sections.</p>
-                </div>`;
-            openedCount.textContent = ALL_SECTIONS.length;
-            return;
-        }
-
-        openedCount.textContent = usedClasses.size;
-
-        const makeBtn = (section) => {
-            const isUsed = usedClasses.has(section);
-            const status = SECTION_STATUS[section];
-            const isLocked = status === 0 || status === undefined;
-            let cls = 'unlocked';
-            if (isUsed) cls = 'used';
-            else if (isLocked) cls = 'locked';
-            const disabled = isUsed || isLocked ? 'disabled' : '';
-            let badge = '';
-            if (!isUsed) badge = isLocked
-                ? '<span class="badge">Locked</span>'
-                : '<span class="badge">Open</span>';
-            return `<button class="section-btn ${cls}" data-section="${section}" ${disabled}>
-                        <span>${section}</span>${badge}
-                    </button>`;
+        let SECTION_STATUS = {};
+        let SECTION_URLS = {
+            "1D": "https://lfjc1d.github.io/1d/",
+            "1M": "https://lfjc1m.github.io/1M/",
+            "1N": "https://lfjc1n.github.io/1n/",
+            "1E": "https://lfjc1e.github.io/1e/",
+            "2D": "https://lfjc2d.github.io/2d/",
+            "2M": "https://lfjc2m.github.io/2m/",
+            "2N": "https://lfjc2n.github.io/2n/",
+            "2E": "https://lfjc2e.github.io/2e/"
         };
 
-        sectionsContainer.innerHTML = `
-            <div class="column">
-                <div class="column-label">First Year</div>
-                ${COLUMN_1.map(makeBtn).join('')}
-            </div>
-            <div class="column">
-                <div class="column-label">Second Year</div>
-                ${COLUMN_2.map(makeBtn).join('')}
-            </div>`;
+        const FALLBACK_CONFIG = {
+            "1D": 1, "1M": 1, "1N": 1, "1E": 1,
+            "2D": 1, "2M": 1, "2N": 1, "2E": 1
+        };
 
-        document.querySelectorAll('.section-btn.unlocked:not([disabled])').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const section = this.dataset.section;
-                const url = SECTION_URLS[section];
-                if (!url) {
-                    showMessage('⚠️', 'Configuration error', `Section ${section} is not configured.`, 'Contact admin.', 'OK', '');
-                    return;
-                }
-                checkSectionAccess(section, url);
-            });
-        });
-    }
-
-    window.reloadConfig = async function() {
-        sectionsContainer.innerHTML = `
-            <div class="state-box" style="grid-column:1/-1;">
-                <div class="loading-spinner"></div>
-                <h3>Reloading configuration…</h3>
-            </div>`;
-        await loadConfigFromSheets();
-        renderSections();
-    };
-
-    // ----- Time + render -----
-    async function checkTimeAndRender() {
-        switchScreen(mainInterface);
-        currentState = 'sections';
-        await loadConfigFromSheets();
-
-        if (isExamTime()) {
-            timeStatus.style.display = 'none';
-            renderSections();
-        } else {
-            timeStatus.style.display = 'block';
-            sectionsContainer.innerHTML = '';
-            hideMessage();
+        // ---- FIX 1: correct schedule — Mon–Fri 08:00–17:00, Sat 08:00–14:00, Sun closed ----
+        function isExamTime() {
+            const now = new Date();
+            const total = now.getHours() * 60 + now.getMinutes();
+            const day = now.getDay(); // 0 Sun … 6 Sat
+            if (day === 0) return false;
+            if (day === 6) return total >= 40 && total < 840;   // Saturday 08:00–14:00
+            return total >= 40 && total < 1020;                  // Mon–Fri 08:00–17:00
         }
-    }
 
-    // ----- Password -----
-    function checkPassword() {
-        const pwd = passwordInput.value.trim();
+        const REGULAR_PASSWORD = "lfjc2025";
+        const STORAGE_KEY = 'lfjc_used_sections';
+
+        let usedClasses = new Set();
+        let isChecking = false;
+        let currentState = 'combined';
+        let examWindowOpen = true;
+
+        const combinedScreen = document.getElementById('combinedScreen');
+        const mainInterface = document.getElementById('mainInterface');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMsg = document.getElementById('errorMessage');
+        const sectionsContainer = document.getElementById('sectionsContainer');
+        const timeStatus = document.getElementById('timeStatus');
+
+        const msgBox = document.getElementById('interfaceMessage');
+        const msgIcon = document.getElementById('msgIcon');
+        const msgTitle = document.getElementById('msgTitle');
+        const msgMessage = document.getElementById('msgMessage');
+        const msgSubText = document.getElementById('msgSubText');
+        const msgCloseBtn = document.getElementById('msgCloseBtn');
+
+        function loadUsedSections() {
+            try {
+                const saved = sessionStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    usedClasses = new Set(JSON.parse(saved));
+                }
+            } catch(e) {}
+        }
+
+        function saveUsedSections() {
+            try {
+                sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...usedClasses]));
+            } catch(e) {}
+        }
+
+        loadUsedSections();
+
+        function showMessage(icon, title, message, subText, btnText, btnClass) {
+            msgIcon.textContent = icon;
+            msgTitle.textContent = title;
+            msgMessage.innerHTML = message;
+            msgSubText.textContent = subText || '';
+            msgCloseBtn.textContent = btnText || 'OK';
+            msgCloseBtn.className = 'close-btn ' + (btnClass || '');
+
+            sectionsContainer.style.display = 'none';
+            msgBox.style.display = 'block';
+        }
+
+        function hideMessage() {
+            msgBox.style.display = 'none';
+            sectionsContainer.style.display = 'flex';
+        }
+
+        msgCloseBtn.addEventListener('click', hideMessage);
+
+        function enterFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+        }
+
+        function focusPassword() {
+            setTimeout(() => passwordInput?.focus(), 100);
+        }
+
+        function switchScreen(toScreen) {
+            combinedScreen.classList.remove('active');
+            mainInterface.classList.remove('active');
+            toScreen.classList.add('active');
+        }
+
+        function shakeBox() {
+            const box = document.querySelector('.password-box');
+            box?.style.setProperty('animation', 'shake 0.5s');
+            setTimeout(() => box?.style.removeProperty('animation'), 500);
+        }
+
+        function showError(msg) {
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = msg;
+            setTimeout(() => errorMsg.style.display = 'none', 3500);
+        }
+
+        async function loadConfigFromSheets() {
+            try {
+                const response = await fetch(SHEET_URL);
+                if (!response.ok) throw new Error('Network error');
+                const csv = await response.text();
+
+                const rows = csv.split('\n');
+                const config = {};
+                let hasData = false;
+
+                rows.forEach(row => {
+                    const parts = row.split(',');
+                    if (parts.length >= 2) {
+                        const section = parts[0].trim().toUpperCase();
+                        const status = parseInt(parts[1].trim());
+                        if (section && !isNaN(status) && SECTION_URLS[section]) {
+                            config[section] = status;
+                            hasData = true;
+                        }
+                    }
+                });
+
+                if (hasData) {
+                    SECTION_STATUS = config;
+                    console.log('✅ Config loaded from Google Sheets:', SECTION_STATUS);
+                    return true;
+                } else {
+                    console.warn('⚠️ No valid data found in sheet, using fallback');
+                    SECTION_STATUS = { ...FALLBACK_CONFIG };
+                    return false;
+                }
+            } catch(e) {
+                console.error('❌ Failed to load from Google Sheets:', e);
+                SECTION_STATUS = { ...FALLBACK_CONFIG };
+                return false;
+            }
+        }
+
+        function checkSectionAccess(section, url, btnElement) {
+            if (isChecking) {
+                showMessage('⏳', 'PLEASE WAIT', 'A check is already in progress.', 'Please wait.', 'OK', '');
+                return;
+            }
+
+            if (usedClasses.has(section)) {
+                showMessage('✅', 'ALREADY OPENED', `Section ${section} already opened.`, '', 'OK', 'green');
+                return;
+            }
+
+            if (!navigator.onLine) {
+                showMessage('📡', 'NETWORK LOSS', 'Your internet connection is lost.', 'Please check your network and try again.', 'Try Again', 'orange');
+                return;
+            }
+
+            if (!examWindowOpen) {
+                showMessage('🔒', 'EXAM UNAVAILABLE', 'Exams are not available right now.', 'Please contact your administrator.', 'OK', '');
+                return;
+            }
+
+            if (SECTION_STATUS[section] === 0) {
+                showMessage('🔒', 'EXAM LOCKED', `Section ${section} is currently locked.`,
+                           'This exam is restricted to authorized students.', 'OK', '');
+                return;
+            }
+
+            usedClasses.add(section);
+            saveUsedSections();
+            renderSections();
+            window.open(url, '_blank');
+        }
+
+        // ---- FIX 4: always render all 8 classes. When the window is closed,
+        //             every class shows as locked (your original red locked style).
+        function renderSections() {
+            hideMessage();
+
+            const sections = ['1D', '1M', '1N', '1E', '2D', '2M', '2N', '2E'];
+            const column1 = sections.slice(0, 4);
+            const column2 = sections.slice(4, 8);
+
+            const hasConfigData = sections.some(s => SECTION_STATUS[s] !== undefined);
+
+            if (!hasConfigData) {
+                sectionsContainer.innerHTML = `
+                    <div style="color: white; text-align: center; padding: 40px; width: 100%;">
+                        <div style="font-size: 40px; margin-bottom: 20px;">⏳</div>
+                        <h2 style="color: #FF9800; margin-bottom: 10px;">Loading Configuration...</h2>
+                        <p style="font-size: 16px; color: #aaa;">Please wait while we fetch the latest settings</p>
+                        <button onclick="reloadConfig()" style="margin-top: 20px; background: #4CAF50; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-size: 16px; cursor: pointer;">Retry</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const makeBtn = (section) => {
+                const isUsed = usedClasses.has(section);
+                const status = SECTION_STATUS[section];
+                const sheetLocked = status === 0 || status === undefined;
+                const isLocked = !examWindowOpen || sheetLocked;
+
+                let btnClass = '';
+                if (isUsed) btnClass = 'used';
+                else if (isLocked) btnClass = 'locked';
+                else btnClass = 'unlocked';
+
+                const disabled = isUsed || isLocked ? 'disabled' : '';
+                const badge = isUsed ? '' : (isLocked ? '🔒 LOCKED' : '<span class="lock-badge">🔓 OPEN</span>');
+                return `
+                    <button class="section-btn ${btnClass}"
+                            data-section="${section}"
+                            ${disabled}>
+                        ${section}
+                        ${badge}
+                    </button>
+                `;
+            };
+
+            sectionsContainer.innerHTML = `
+                <div class="column">
+                    ${column1.map(makeBtn).join('')}
+                </div>
+                <div class="column">
+                    ${column2.map(makeBtn).join('')}
+                </div>
+            `;
+
+            document.querySelectorAll('.section-btn.unlocked:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    const url = SECTION_URLS[section];
+
+                    if (!url) {
+                        showMessage('⚠️', 'CONFIGURATION ERROR', `Section ${section} is not configured.`, 'Contact admin.', 'OK', '');
+                        return;
+                    }
+
+                    checkSectionAccess(section, url, this);
+                });
+            });
+        }
+
+        window.reloadConfig = async function() {
+            sectionsContainer.innerHTML = `
+                <div style="color: white; text-align: center; padding: 40px; width: 100%;">
+                    <div class="loading-spinner"></div>
+                    <h2 style="color: #FF9800; margin-bottom: 10px;">Reloading Configuration...</h2>
+                    <p style="font-size: 16px; color: #aaa;">Fetching latest settings from Google Sheets</p>
+                </div>
+            `;
+            await loadConfigFromSheets();
+            renderSections();
+        };
+
+        async function checkTimeAndRender() {
+            switchScreen(mainInterface);
+            currentState = 'sections';
+
+            await loadConfigFromSheets();
+
+            examWindowOpen = isExamTime();
+            if (!examWindowOpen) {
+                timeStatus.style.display = 'block';
+            } else {
+                timeStatus.style.display = 'none';
+            }
+
+            // Always render all classes — locked ones show your red locked style.
+            renderSections();
+        }
+
+        function checkPassword() {
+            const pwd = passwordInput.value.trim();
+            errorMsg.style.display = 'none';
+
+            if (!pwd) {
+                showError('Please enter a password');
+                shakeBox();
+                focusPassword();
+                return;
+            }
+
+            if (pwd === REGULAR_PASSWORD) {
+                enterFullscreen();
+                checkTimeAndRender();
+                passwordInput.value = '';
+            } else {
+                showError('Incorrect password. Try again.');
+                passwordInput.value = '';
+                shakeBox();
+                focusPassword();
+            }
+        }
+
+        submitBtn.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            e.preventDefault();
+            if (currentState === 'sections') {
+                switchScreen(combinedScreen);
+                currentState = 'combined';
+                passwordInput.value = '';
+                focusPassword();
+            }
+        });
+
+        window.addEventListener('load', () => {
+            focusPassword();
+            if (currentState === 'sections' || mainInterface.classList.contains('active')) {
+                checkTimeAndRender();
+            }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.removeItem(STORAGE_KEY);
+        });
+
+        // ---- FIX 2: no enterFullscreen() on tap — fixes mobile password click ----
+        document.addEventListener('click', (e) => {
+            if (currentState !== 'combined') return;
+            if (e.target.closest('.password-box')) return; // let the input handle its own focus
+            focusPassword();
+        });
+
         errorMsg.style.display = 'none';
 
-        if (!pwd) {
-            showError('Please enter an access code.');
-            shakeBox();
-            focusPassword();
-            return;
-        }
+        window.addEventListener('online', () => {
+            if (currentState === 'sections') {
+                loadConfigFromSheets().then(() => renderSections());
+            }
+        });
 
-        if (pwd === REGULAR_PASSWORD) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Checking…';
-            enterFullscreen();
-            checkTimeAndRender().finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Continue';
-                passwordInput.value = '';
-            });
-        } else {
-            showError('Incorrect access code. Try again.');
-            passwordInput.value = '';
-            shakeBox();
-            focusPassword();
-        }
-    }
+        window.addEventListener('offline', () => {
+            if (currentState === 'sections') {
+                showMessage('📡', 'CONNECTION LOST', 'Your internet connection has been lost.', 'Please reconnect.', 'OK', 'orange');
+            }
+        });
 
-    submitBtn.addEventListener('click', checkPassword);
-    passwordInput.addEventListener('keypress', e => {
-        if (e.key === 'Enter') checkPassword();
-    });
+        hideMessage();
+        console.log('✅ LFJC Exam System Loaded - Google Sheets Config');
 
-    // Scroll password input into view when keyboard opens on mobile
-    passwordInput.addEventListener('focus', () => {
-        setTimeout(() => {
-            const card = document.querySelector('.login-card');
-            if (card) card.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        }, 300);
-    });
-
-    // ----- Escape to return to login -----
-    document.addEventListener('keydown', e => {
-        if (e.key !== 'Escape') return;
-        e.preventDefault();
-        if (currentState === 'sections') {
-            switchScreen(combinedScreen);
-            currentState = 'combined';
-            passwordInput.value = '';
-            focusPassword();
-        }
-    });
-
-    // ----- Init -----
-    window.addEventListener('load', () => {
-        focusPassword();
-        if (currentState === 'sections' || mainInterface.classList.contains('active')) {
-            checkTimeAndRender();
-        }
-    });
-
-    window.addEventListener('beforeunload', () => {
-        sessionStorage.removeItem(STORAGE_KEY);
-    });
-
-    // Tapping anywhere on the login screen focuses the input (NO fullscreen call)
-    document.addEventListener('click', e => {
-        if (currentState !== 'combined') return;
-        if (e.target.closest('.login-card')) return;
-        focusPassword();
-    });
-
-    window.addEventListener('online', () => {
-        if (currentState === 'sections') {
-            loadConfigFromSheets().then(() => renderSections());
-        }
-    });
-
-    window.addEventListener('offline', () => {
-        if (currentState === 'sections') {
-            showMessage('📡', 'Connection lost', 'Your internet connection has been lost.', 'Please reconnect.', 'OK', 'orange');
-        }
-    });
-
-    errorMsg.style.display = 'none';
-    console.log('✅ LFJC Exam System Loaded');
-})();
-</script>
+    })();
+    </script>
 </body>
 </html>
